@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Plantio</title>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --green:#2e7d32;
+  --green-dark:#1b5e20;
+  --green-light:#e8f5e9;
+  --bg:#eef5ef;
+  --text:#1b1b1b;
+  --sub:#5f6f64;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(180deg,#eef5ef,#e0efe3);
+  color:var(--text);
+}
+
+header{
+  text-align:center;
+  padding:70px 20px 50px;
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:white;
+}
+
+.titulo {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #ffffff, #c8e6c9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+  
+.controls{
+  max-width:950px;
+  margin:-40px auto 30px;
+  padding:25px;
+  background:white;
+  border-radius:18px;
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  justify-content:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+}
+
+.campo{display:flex;flex-direction:column;min-width:170px}
+.campo label{font-size:13px;color:var(--sub);margin-bottom:6px}
+
+.custom{position:relative}
+
+.select{
+  padding:13px;
+  border-radius:12px;
+  background:#f7faf7;
+  border:1px solid #ddd;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.select:hover{border-color:var(--green)}
+
+.select span{transition:all .25s ease}
+
+.arrow{transition:.3s}
+.select.active .arrow{transform:rotate(180deg)}
+
+.options{
+  position:absolute;
+  width:100%;
+  top:110%;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 15px 30px rgba(0,0,0,.1);
+  overflow:hidden;
+  display:none;
+  z-index:10;
+}
+
+.options div{
+  padding:12px;
+  cursor:pointer;
+}
+.options div:hover{background:var(--green-light)}
+
+.btn-area{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  margin-top:10px;
+}
+
+button{
+  padding:15px 40px;
+  border-radius:14px;
+  border:none;
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  display:flex;
+  gap:20px;
+  padding:0 20px;
+  flex-wrap:wrap;
+}
+
+.card{
+  flex:1;
+  min-width:300px;
+  border-radius:16px;
+  padding:30px;
+  background:white;
+  box-shadow:0 10px 25px rgba(0,0,0,.06);
+  opacity:0;
+  transform:translateY(40px);
+  transition:.6s;
+}
+
+.card.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.card:hover{
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:0 20px 40px rgba(0,0,0,0.12);
+}
+
+.bad{border-left:6px solid #c62828}
+.good{border-left:6px solid var(--green)}
+
+.card p{color:var(--sub);line-height:1.6}
+
+footer{
+  text-align:center;
+  margin:50px 0;
+  color:#6b7d70;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1 class="titulo">🌱 Faça seu Simulador de Plantio</h1>
+<p>Simule decisões e aprenda boas práticas agrícolas</p>
+</header>
+
+<div class="controls">
+
+<div class="campo">
+<label>Cultura</label>
+<div class="custom">
+<div class="select" onclick="toggle(this,'opt1')">
+<span id="txt1">🌽 Milho</span><span class="arrow">▼</span>
+</div>
+<div class="options" id="opt1">
+<div onclick="choose('milho','🌽 Milho','txt1','opt1')">🌽 Milho</div>
+<div onclick="choose('soja','🌱 Soja','txt1','opt1')">🌱 Soja</div>
+<div onclick="choose('trigo','🌾 Trigo','txt1','opt1')">🌾 Trigo</div>
+</div>
+<input type="hidden" id="planta" value="milho">
+</div>
+</div>
+
+<div class="campo">
+<label>Época</label>
+<div class="custom">
+<div class="select" onclick="toggle(this,'opt2')">
+<span id="txt2">☀️ Verão</span><span class="arrow">▼</span>
+</div>
+<div class="options" id="opt2">
+<div onclick="choose('verao','☀️ Verão','txt2','opt2')">☀️ Verão</div>
+<div onclick="choose('primavera','🌸 Primavera','txt2','opt2')">🌸 Primavera</div>
+<div onclick="choose('inverno','❄️ Inverno','txt2','opt2')">❄️ Inverno</div>
+</div>
+<input type="hidden" id="epoca" value="verao">
+</div>
+</div>
+
+<div class="campo">
+<label>Irrigação</label>
+<div class="custom">
+<div class="select" onclick="toggle(this,'opt3')">
+<span id="txt3">⚖️ Equilibrada</span><span class="arrow">▼</span>
+</div>
+<div class="options" id="opt3">
+<div onclick="choose('baixo','💧 Baixa','txt3','opt3')">💧 Baixa</div>
+<div onclick="choose('medio','⚖️ Equilibrada','txt3','opt3')">⚖️ Equilibrada</div>
+<div onclick="choose('alto','💦 Alta','txt3','opt3')">💦 Alta</div>
+</div>
+<input type="hidden" id="agua" value="medio">
+</div>
+</div>
+
+<div class="campo">
+<label>Manejo</label>
+<div class="custom">
+<div class="select" onclick="toggle(this,'opt4')">
+<span id="txt4">📊 Precisão</span><span class="arrow">▼</span>
+</div>
+<div class="options" id="opt4">
+<div onclick="choose('precisao','📊 Precisão','txt4','opt4')">📊 Precisão</div>
+<div onclick="choose('tradicional','⚙️ Tradicional','txt4','opt4')">⚙️ Tradicional</div>
+<div onclick="choose('intensivo','⚠️ Intensivo','txt4','opt4')">⚠️ Intensivo</div>
+</div>
+<input type="hidden" id="manejo" value="precisao">
+</div>
+</div>
+
+<div class="btn-area">
+<button onclick="simular()">Simular Produção</button>
+</div>
+
+</div>
+
+<div class="container">
+<div class="card bad" id="ruim">
+<h2>Impacto negativo</h2>
+<p id="textoRuim"></p>
+</div>
+
+<div class="card good" id="bom">
+<h2>Produção sustentável</h2>
+<p id="textoBom"></p>
+</div>
+</div>
+
+<footer>Projeto Agrinho 2026 - Marina Ribeiro</footer>
+
+<script>
+
+const planta = document.getElementById("planta");
+const epoca = document.getElementById("epoca");
+const agua = document.getElementById("agua");
+const manejo = document.getElementById("manejo");
+
+const textoRuim = document.getElementById("textoRuim");
+const textoBom = document.getElementById("textoBom");
+
+const ruimCard = document.getElementById("ruim");
+const bomCard = document.getElementById("bom");
+
+function toggle(el,id){
+  document.querySelectorAll('.options').forEach(o=>o.style.display='none');
+  document.querySelectorAll('.select').forEach(s=>s.classList.remove('active'));
+
+  let opt=document.getElementById(id);
+  if(opt.style.display==="block"){
+    opt.style.display="none";
+  }else{
+    opt.style.display="block";
+    el.classList.add("active");
+  }
+}
+
+function choose(val,txt,txtId,optId){
+  let el = document.getElementById(txtId);
+
+  el.style.opacity="0";
+  el.style.transform="translateY(10px)";
+
+  setTimeout(()=>{
+    el.innerText=txt;
+    el.style.transform="translateY(-10px)";
+    setTimeout(()=>{
+      el.style.opacity="1";
+      el.style.transform="translateY(0)";
+    },50);
+  },150);
+
+  document.getElementById(optId).style.display="none";
+
+  if(txtId==="txt1") planta.value=val;
+  if(txtId==="txt2") epoca.value=val;
+  if(txtId==="txt3") agua.value=val;
+  if(txtId==="txt4") manejo.value=val;
+}
+
+document.addEventListener("click",(e)=>{
+  if(!e.target.closest(".custom")){
+    document.querySelectorAll('.options').forEach(o=>o.style.display='none');
+    document.querySelectorAll('.select').forEach(s=>s.classList.remove('active'));
+  }
+});
+
+function simular(){
+
+let ruim = [];
+let bom = [];
+
+if(planta.value==="milho" && agua.value==="baixo"){
+  ruim.push("Pouca água no milho reduz o crescimento e compromete a produtividade.");
+}
+
+if(planta.value==="trigo" && agua.value==="alto"){
+  ruim.push("Excesso de água no trigo pode causar doenças e prejudicar o solo.");
+}
+
+if(agua.value==="medio"){
+  bom.push("Irrigação equilibrada evita desperdício e mantém o solo saudável.");
+}
+
+if(
+(planta.value==="milho"&&epoca.value==="verao")||
+(planta.value==="soja"&&epoca.value==="primavera")||
+(planta.value==="trigo"&&epoca.value==="inverno")
+){
+  bom.push("Plantio na época correta melhora o aproveitamento do clima e aumenta a produção.");
+}else{
+  ruim.push("Plantio fora da época reduz o rendimento e aumenta riscos climáticos.");
+}
+
+if(manejo.value==="precisao"){
+  bom.push("Agricultura de precisão aumenta a eficiência e reduz desperdícios.");
+}
+
+if(manejo.value==="tradicional"){
+  ruim.push("Manejo tradicional pode gerar desperdícios por falta de monitoramento.");
+}
+
+if(manejo.value==="intensivo"){
+  ruim.push("Uso intensivo pode degradar o solo e causar impactos ambientais.");
+}
+
+if(ruim.length===0){
+  ruim.push("Nenhum impacto grave identificado, mas o monitoramento contínuo é essencial.");
+}
+
+if(bom.length===0){
+  bom.push("Ajustes podem melhorar a sustentabilidade da produção.");
+}
+
+let textoR = "❌ <strong>Impactos negativos:</strong><br><br>";
+ruim.forEach(r=> textoR += "• " + r + "<br>");
+textoR += "<br><strong>Atenção:</strong> decisões inadequadas prejudicam o solo no longo prazo.";
+
+let textoB = "✅ <strong>Boas práticas:</strong><br><br>";
+bom.forEach(b=> textoB += "• " + b + "<br>");
+textoB += "<br><strong>Dica:</strong> Equilibre água, época e manejo para máxima eficiência.";
+
+textoRuim.innerHTML = textoR;
+textoBom.innerHTML = textoB;
+
+ruimCard.classList.add("show");
+bomCard.classList.add("show");
+}
+</script>
+
+</body>
+</html>
