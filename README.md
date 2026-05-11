@@ -1,6 +1,6 @@
 # 🌱 Simulador de Plantio Sustentável
 
-Meu nome é Marina de Lima Ribeiro e sou uma aluna do primeiro ano do ensino médio e estou participando do concurso ***Agrinho 2026**, cujo o tema: ***"Agro forte, futuro sustentável: equilíbrio entre produção e meio ambiente"***
+Meu nome é Marina de Lima Ribeiro e sou uma aluna do primeiro ano do ensino médio e estou participando do concurso ***Agrinho 2026**, cujo o tema: **"Agro forte, futuro sustentável: equilíbrio entre produção e meio ambiente"***
 
 ---
 
